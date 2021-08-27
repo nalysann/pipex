@@ -120,7 +120,7 @@ static char	**get_path_dirs(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strstartswith(*envp, "PATH=")) {
+		if (ft_strstartswith(envp[i], "PATH=")) {
 			path = envp[i] + 5;
 			break;
 		}
@@ -142,8 +142,8 @@ int		main(int argc, char* argv[], char* envp[]) {
 		ft_perror(NAME, E_PIPE_FAIL);
 	create_child_process(argv[2], FD_FILE_IN | FD_PIPE_OUT, &pipex);
 	create_child_process(argv[3], FD_PIPE_IN | FD_FILE_OUT, &pipex);
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
+	close(pipex.fd_pipe[0]);
+	close(pipex.fd_pipe[1]);
 	wait(NULL);
 	wait(NULL);
 	free_split(pipex.path_dirs);
