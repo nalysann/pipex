@@ -24,19 +24,23 @@
 
 # define E_INV_ARGC 1
 # define E_EMPTY_CMD 2
-# define E_DUP2_FAIL 3
-# define E_PIPE_FAIL 4
-# define E_FORK_FAIL 5
-# define E_OPEN_FAIL 6
-# define E_EXEC_FAIL 7
-# define E_PATH_PERM 8
-# define E_PATH_NOCMD 9
+# define E_DUP_FAIL 3
+# define E_DUP2_FAIL 4
+# define E_PIPE_FAIL 5
+# define E_FORK_FAIL 6
+# define E_OPEN_FAIL 7
+# define E_EXEC_FAIL 8
+# define E_PATH_PERM 9
+# define E_PATH_NOCMD 10
 
 # define FD_FILE_IN 1
 # define FD_PIPE_IN 2
-# define FD_FILE_OUT 4
-# define FD_PIPE_OUT 8
-# define ST_SAVE 16
+# define FD_PREV_IN 4
+# define FD_FILE_OUT 8
+# define FD_PIPE_OUT 16
+# define ST_SAVE 32
+
+# define HEREDOC_MSG "pipe heredoc> "
 
 struct s_pipex
 {
@@ -48,11 +52,13 @@ struct s_pipex
 	pid_t	last_pid;
 	int		last_status;
 	int		heredoc;
+	int		prev_fd_in;
 };
 
 typedef struct s_pipex	t_pipex;
 
 char	**get_path_dirs(char **envp);
 void	ft_execlp(char **argv, t_pipex *pipex);
+void	create_child_process(const char *cmd, int flags, t_pipex *pipex);
 
 #endif
