@@ -4,10 +4,17 @@ NAME := pipex
 
 SRC_DIR := src
 
-SRC := main.c
+SRC := pipex.c \
+       utils.c
 
 OBJ := $(SRC:.c=.o)
 DEP := $(SRC:.c=.d)
+
+SRC_BONUS := pipex_bonus.c \
+             utils.c
+
+OBJ_BONUS := $(SRC_BONUS:.c=.o)
+DEP_BONUS := $(SRC_BONUS:.c=.d)
 
 # **************************************************************************** #
 
@@ -25,6 +32,10 @@ OBJ_DIR := obj
 
 OBJ := $(addprefix $(OBJ_DIR)/, $(OBJ))
 DEP := $(addprefix $(OBJ_DIR)/, $(DEP))
+
+NAME_BONUS := $(addprefix $(OBJ_DIR)/, $(NAME))
+OBJ_BONUS := $(addprefix $(OBJ_DIR)/, $(OBJ_BONUS))
+DEP_BONUS := $(addprefix $(OBJ_DIR)/, $(DEP_BONUS))
 
 # **************************************************************************** #
 
@@ -62,7 +73,7 @@ WHITE   := \033[0;37m
 
 # **************************************************************************** #
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re
 
 # **************************************************************************** #
 
@@ -72,12 +83,24 @@ all:
 	@printf "$(CYAN)>>> Making $(NAME) <<<\n$(RESET)"
 	@$(MAKE) $(NAME)
 
+bonus:
+	@printf "$(CYAN)>>> Making $(FT_DIR) <<<\n$(RESET)"
+	@$(MAKE) -C $(FT_DIR)
+	@printf "$(CYAN)>>> Making $(NAME) <<<\n$(RESET)"
+	@$(MAKE) $(NAME_BONUS)
+	@cp $(NAME_BONUS) $(NAME)
+
 $(FT_DIR)/$(FT):
 	@$(MAKE) -C $(FT_DIR)
 
 $(NAME): $(OBJ) $(FT_DIR)/$(FT)
 	@printf "$(GREEN)"
 	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $@
+	@printf "$(RESET)"
+
+$(NAME_BONUS): $(OBJ_BONUS) $(FT_DIR)/$(FT)
+	@printf "$(GREEN)"
+	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ_BONUS) -o $@
 	@printf "$(RESET)"
 
 $(OBJ_DIR):
@@ -89,6 +112,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	@printf "$(RESET)"
 
 -include $(DEP)
+-include $(DEP_BONUS)
 
 clean:
 	@printf "$(CYAN)>>> Cleaning $(FT_DIR) <<<\n$(RESET)"

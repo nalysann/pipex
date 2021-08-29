@@ -10,6 +10,14 @@ add_subdirectory(libft)
 
 add_executable(pipex
         include/pipex.h
-        src/main.c)
+        src/pipex.c
+        src/utils.c)
 
 target_link_libraries(pipex ft)
+
+add_executable(pipex_bonus
+        include/pipex.h
+        src/pipex_bonus.c
+        src/utils.c)
+
+target_link_libraries(pipex_bonus ft)
