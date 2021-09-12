@@ -20,7 +20,12 @@
 
 void	ft_error(const char *msg, int code)
 {
-	ft_putendl_fd(msg, STDERR_FILENO);
+	char	error_buf[ERROR_BUF_SIZE + 1];
+
+	ft_strncpy(error_buf, msg, ERROR_BUF_SIZE);
+	ft_strncat(error_buf, "\n", ERROR_BUF_SIZE);
+	error_buf[ERROR_BUF_SIZE] = '\0';
+	ft_putstr_fd(error_buf, STDERR_FILENO);
 	exit(code);
 }
 
