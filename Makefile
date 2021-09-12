@@ -1,20 +1,18 @@
+# **************************************************************************** #
+
 NAME := pipex
 
 # **************************************************************************** #
-
-SRC_DIR := src
 
 SRC := pipex.c \
        utils.c
 
 OBJ := $(SRC:.c=.o)
-DEP := $(SRC:.c=.d)
 
 SRC_BONUS := pipex_bonus.c \
              utils.c
 
 OBJ_BONUS := $(SRC_BONUS:.c=.o)
-DEP_BONUS := $(SRC_BONUS:.c=.d)
 
 # **************************************************************************** #
 
@@ -23,33 +21,22 @@ FT := libft.a
 
 # **************************************************************************** #
 
+SRC_DIR := src
+OBJ_DIR := obj
+
 INC_DIRS := include \
             $(FT_DIR)/include \
 
-# **************************************************************************** #
-
-OBJ_DIR := obj
-
 OBJ := $(addprefix $(OBJ_DIR)/, $(OBJ))
-DEP := $(addprefix $(OBJ_DIR)/, $(DEP))
+DEP := $(OBJ:.o=.d)
 
 NAME_BONUS := $(addprefix $(OBJ_DIR)/, $(NAME))
 OBJ_BONUS := $(addprefix $(OBJ_DIR)/, $(OBJ_BONUS))
-DEP_BONUS := $(addprefix $(OBJ_DIR)/, $(DEP_BONUS))
+DEP_BONUS := $(OBJ_BONUS:.o=.d)
 
 # **************************************************************************** #
 
-UNAME_S := $(shell uname -s)
-
-ifeq ($(UNAME_S), Darwin)
-    CC := clang
-endif
-
-ifeq ($(UNAME_S), Linux)
-    CC := gcc
-endif
-
-# **************************************************************************** #
+CC := clang
 
 CFLAGS += -Wall -Wextra -Werror \
           $(addprefix -I , $(INC_DIRS)) \
@@ -83,6 +70,8 @@ all:
 	@printf "$(CYAN)>>> Making $(NAME) <<<\n$(RESET)"
 	@$(MAKE) $(NAME)
 
+# **************************************************************************** #
+
 bonus:
 	@printf "$(CYAN)>>> Making $(FT_DIR) <<<\n$(RESET)"
 	@$(MAKE) -C $(FT_DIR)
@@ -90,29 +79,39 @@ bonus:
 	@$(MAKE) $(NAME_BONUS)
 	@cp $(NAME_BONUS) $(NAME)
 
+# **************************************************************************** #
+
 $(FT_DIR)/$(FT):
 	@$(MAKE) -C $(FT_DIR)
 
+# **************************************************************************** #
+
 $(NAME): $(OBJ) $(FT_DIR)/$(FT)
 	@printf "$(GREEN)"
-	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ) -o $@
+	$(CC) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
 	@printf "$(RESET)"
+
+# **************************************************************************** #
 
 $(NAME_BONUS): $(OBJ_BONUS) $(FT_DIR)/$(FT)
 	@printf "$(GREEN)"
-	$(CC) $(LDFLAGS) $(LDLIBS) $(OBJ_BONUS) -o $@
+	$(CC) $(OBJ_BONUS) -o $@ $(LDFLAGS) $(LDLIBS)
 	@printf "$(RESET)"
 
-$(OBJ_DIR):
-	@mkdir -p $@
+# **************************************************************************** #
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@printf "$(MAGENTA)"
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@printf "$(RESET)"
 
+# **************************************************************************** #
+
 -include $(DEP)
 -include $(DEP_BONUS)
+
+# **************************************************************************** #
 
 clean:
 	@printf "$(CYAN)>>> Cleaning $(FT_DIR) <<<\n$(RESET)"
@@ -131,3 +130,5 @@ fclean: clean
 	@printf "$(RESET)"
 
 re: fclean all
+
+# **************************************************************************** #
